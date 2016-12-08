@@ -17,32 +17,38 @@ using namespace std;
 
 
 string letters = "abcdefghijklmnopqrstuvwxyz";
+/* class Course contains coutse name, number, credit hours and description and a method of checking entered course name
+is/isnt in the course list*/
 
+/* this class initiate course related information and check if input course name in the list */
 class Course {
 public:
-    vector<string> course_names;
-    vector<string> course_nums;
-    vector<int> credit_hours;
-    vector<string> course_desc;
-    Course();
+    vector<string> course_names;    //course names vector
+    vector<string> course_nums;     //course numbers vector
+    vector<int> credit_hours;       //course credit hours vector
+    vector<string> course_desc;     //course descriptions vector
+    Course();                       //course constructor
 };
 
-Course::Course() {
+Course::Course() {                  //course constructor
 }
 
 Course course;
 
-int check_course(string cours) {
+int check_course(string cours) {        //checks to see if user's course number is in the actual list of course numbers
     int i;
-    for (i = 0; i < course.course_nums.size(); i++) {
+    for (i = 0; i < course.course_nums.size(); i++) {   //goes through all course numbers to check for match
         if (cours == course.course_nums[i]) {
-            return i;
+            return i;       //returns index of match
         }
     }
     return -1;
 }
 
-class UserType {
+
+/* class UserType contains username, password, first mid and last name of user and methods handling(save) the inputs*/
+/* usertype asking user input infor,  get and save infor */
+class UserType {    //generic user class with name, username, and password
 protected:
     string username;
     string password;
@@ -50,37 +56,37 @@ protected:
     string mid_name;
     string last_name;
 public:
-    UserType();
-    UserType(string fname, string mname, string lname);
+    UserType();     //constructor
+    UserType(string fname, string mname, string lname);     //second constructor with parameters
 
-    string get_fname() {
+    string get_fname() {        //method to send first name
         return first_name;
     }
-    void set_fname(string fname);
+    void set_fname(string fname);      //method to set first name
 
-    string get_mname() {
+    string get_mname() {        //method to send middle name
         return mid_name;
     }
-    void set_mname(string mname);
+    void set_mname(string mname);       //method to set middle name
 
-    string get_lname() {
+    string get_lname() {        //method to send last name
         return last_name;
     }
-    void set_lname(string lname);
+    void set_lname(string lname);       //method to set last name
 
-    string get_uname() {
+    string get_uname() {        //method to send username
         return username;
     }
-    virtual void set_uname();
+    virtual void set_uname();       //method to set username
 
-    string get_password() {
+    string get_password() {     //method to send password
         return password;
     }
-    void set_password(string pw);
+    void set_password(string pw);   //method to set password
     virtual void menu();
 };
 
-UserType::UserType() {
+UserType::UserType() {      //constructor asking user name(first mid last) 
     cout << "Enter your first name:";
     cin >> first_name;
     cout << "Enter your middle name:";
@@ -89,13 +95,13 @@ UserType::UserType() {
     cin >> last_name;
 }
 
-UserType::UserType(string fname, string mname, string lname) {
+UserType::UserType(string fname, string mname, string lname) {      //constructor with parameters
     first_name = fname;
     mid_name = mname;
     last_name = lname;
 }
 
-void UserType::set_uname() {
+void UserType::set_uname() {                                 //method to set and save user name(first,mid, last
     string tmp_first = get_fname(), tmp_last = get_lname(), tmp_uname;
     tmp_uname = tmp_first[0] + tmp_last;
     username = tmp_uname;
@@ -108,9 +114,9 @@ void UserType::menu() {
 void UserType::set_password(string pw) {
     password = pw;
 }
-
+/* class Faculty inheritance class of Usertype */
 class Faculty : public UserType {
-private:
+private:                            // private member 
     vector<char> schedule;
     int experience;
     double salary;
@@ -137,7 +143,7 @@ Faculty::Faculty(string fname, string mname, string lname) : UserType(fname, mna
 
 void Faculty::set_uname() {
     string tmp_first = get_fname(), tmp_last = get_lname(), tmp_uname;
-    tmp_uname = tmp_first[0] + tmp_last;
+    tmp_uname = tmp_first[0] + tmp_last; //create a nuw username set first letter of first name+last name
     username = tmp_uname;
 }
 
@@ -188,7 +194,7 @@ void Faculty::enrollSummary() {
 }
 
 class Teacher : public UserType {
-private:
+private:    
     int experience;
     double salary;
     vector<string> schedule;
@@ -275,6 +281,7 @@ class Student : public UserType {
 private:
     double tuition;
     double scholarship;
+    string residency;
     vector<string> schedule;
 public:
     Student(string fname, string mname, string lname);
@@ -295,7 +302,24 @@ vector<Teacher> vecTeach;
 vector<Student> vecStud;
 
 Student::Student(string fname, string mname, string lname) : UserType(fname, mname, lname) {
+    char choice;
+    int err = -1;
     set_uname();
+    while (err != 0){
+    cout << "Are you an Missouri resident(y/n)?";
+    cin >> choice;
+    if (choice == 'y' || choice == 'Y'){
+        residency = "resident";
+        err = 0;
+    }
+    else if (choice == 'n' || choice == 'N'){
+        residency = "non-resident";
+        err = 0;
+    }
+    else{
+        cout << "Invalid choice." << endl;
+    }
+    }
 }
 
 void Student::set_uname() {
@@ -331,7 +355,7 @@ void Teacher::enrollSummary() {
     while (choice != -1) {
         switch (choice) {
             case 1:
-                cout << "Enter a course number using the following format ECE ####:";
+                cout << "Enter a course number using the following format CC ####:";
                 fflush(stdin);
                 getline(cin, cours, '\n');
                 if (check_course(cours) != -1) {
@@ -444,7 +468,7 @@ void Student::operation(int choice) {
 void Student::courseEnrollment() {
     system("cls");
     int i, choice, delchoice, schcntr, index, err = 1;
-    char cont = 't';
+    char cont = 'n';
     string cours, pause;
     cout << "Choose an operation:" << endl <<
             "1) Enroll in to a course" << endl <<
@@ -452,9 +476,7 @@ void Student::courseEnrollment() {
     cin >> choice;
     switch (choice) {
         case 1:
-            while (cont != 'n' && cont != 'N') {
-                system("cls");
-                err = 1;
+            while (cont != 'y' && cont != 'Y') {
                 cout << "What courses are you taking this semester:" << endl <<
                         "Enter the course number or if you don't know enter 'list' for an "
                         "list of courses:" << endl;
@@ -503,9 +525,8 @@ void Student::courseEnrollment() {
             }
             break;
         case 2:
-            cont = 't';
-            err = 1;
-            while (cont != 'n' && cont != 'N') {
+            cont = 'n';
+            while (cont != 'y' && cont != 'Y') {
                 if (schedule.size() > 0) {
                     while (delchoice < 0 || delchoice > schedule.size()) {
                         cout << first_name << " " << last_name << "\'s Schedule" << endl <<
@@ -596,14 +617,14 @@ void Student::enrollSummary() {
     for (i = 0; i < schedule.size(); i++) {
         cout << schedule[i] << " " << course.course_names[check_course(schedule[i])] << endl;
     }
-    while (choice == 'Y' || choice == 'y' || choice == 'n' || choice == 'N') {
+    while (choice == 'Y' && choice == 'y' && choice == 'n' && choice == 'N') {
         cout << "Would you like to export your course schedule to an pdf (y/n):";
         cin >> choice;
         if (choice == 'Y' || choice == 'y' || choice == 'n' || choice == 'N') {
             if (choice == 'Y' || choice == 'y') {
                 //Put schedule into an file
             }
-        } else {
+        } else if (choice != 'n' && choice != 'N') {
             cout << "Invalid option. Try again." << endl;
             system("cls");
         }
@@ -684,7 +705,7 @@ void load_data(string filename) {
         }
     }
 }
-
+/* */
 void load_course(int argc, char** argv) {
     int i = 0;
     ifstream fileIn("courses.txt");
